@@ -165,6 +165,7 @@ class DfuTransportSerial(DfuTransport):
         'WriteObject'           : 0x08,
         'Ping'                  : 0x09,
         'Response'              : 0x60,
+        'Abort'                 : 0x0C,
     }
 
     def __init__(self,
@@ -219,6 +220,9 @@ class DfuTransportSerial(DfuTransport):
     def close(self):
         super().close()
         self.serial_port.close()
+
+    def exit_bootloader(self):
+        self.dfu_adapter.send_message([DfuTransportSerial.OP_CODE['Abort']])
 
     def send_init_packet(self, init_packet):
         def try_to_recover():

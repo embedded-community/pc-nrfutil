@@ -147,3 +147,10 @@ class Dfu:
                                                        self.manifest.application.bin_file))
 
         return total_size
+
+    @staticmethod
+    def restart(dfu_transport, connect_delay):
+        time.sleep(connect_delay)
+        dfu_transport.open()
+        dfu_transport.exit_bootloader()
+        dfu_transport.close()

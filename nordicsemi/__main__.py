@@ -1500,6 +1500,72 @@ def zigbee():
     """
     pass
 
+@cli.group()
+def restart():
+    """
+    Utility command to restart dongle application.
+    """
+    pass
+
+@restart.command(short_help='Restart application on a device over a USB serial connection. The DFU '
+                        'target must be a chip with USB pins (i.e. nRF52840) and provide a USB ACM '
+                        'CDC serial interface.')
+@click.option('-p', '--port',
+              help='Serial port address to which the device is connected. (e.g. COM1 in windows systems, /dev/ttyACM0 in linux/mac)',
+              type=click.STRING,
+              cls=OptionRequiredIf)
+@click.option('-cd', '--connect-delay',
+              help='Delay in seconds before each connection to the target device during DFU. Default is 3.',
+              type=click.INT,
+              required=False,
+              default=3)
+@click.option('-fc', '--flow-control',
+              help='To enable flow control set this flag to 1',
+              type=click.BOOL,
+              required=False)
+@click.option('-prn', '--packet-receipt-notification',
+              help='Set the packet receipt notification value',
+              type=click.INT,
+              required=False)
+@click.option('-b', '--baud-rate',
+              help='Set the baud rate',
+              type=click.INT,
+              required=False)
+@click.option('-snr', '--serial-number',
+              help='Serial number of the device. Ignored if --port is set.',
+              type=click.STRING,
+              required=False)
+@click.option('-t', '--timeout',
+              help='Set the timeout in seconds for board to respond (default: 30 seconds)',
+              type=click.INT,
+              required=False)
+def usb_serial_restart(port, connect_delay, flow_control, packet_receipt_notification, baud_rate, serial_number,
+               timeout):
+    """Perform an application restart"""
+    if flow_control is None:
+        flow_control = DfuTransportSerial.DEFAULT_FLOW_CONTROL
+    if packet_receipt_notification is None:
+        packet_receipt_notification = DfuTransportSerial.DEFAULT_PRN
+    if baud_rate is None:
+        baud_rate = DfuTransportSerial.DEFAULT_BAUD_RATE
+    if port is None:
+        device_lister = DeviceLister()
+        device = device_lister.get_device(serial_number=serial_number)
+        if device is None:
+            raise NordicSemiException("A device with serial number %s is not connected." % serial_number)
+        port = device.get_first_available_com_port()
+        logger.info("Resolved serial number {} to port {}".format(serial_number, port))
+
+    if timeout is None:
+        timeout = DfuTransportSerial.DEFAULT_TIMEOUT
+
+    logger.info("Using board at serial port: {}".format(port))
+    serial_backend = DfuTransportSerial(com_port=str(port), baud_rate=baud_rate,
+                                        flow_control=flow_control, prn=packet_receipt_notification, do_ping=False,
+                                        timeout=timeout)
+    Dfu.restart(serial_backend, connect_delay)
+    click.echo("Device restarted")
+
 
 def _pretty_help_option(text: str):
     formatted_lines = []
