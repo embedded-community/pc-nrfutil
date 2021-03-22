@@ -174,7 +174,8 @@ class DfuTransportSerial(DfuTransport):
                  flow_control=DEFAULT_FLOW_CONTROL,
                  timeout=DEFAULT_TIMEOUT,
                  prn=DEFAULT_PRN,
-                 do_ping=DEFAULT_DO_PING):
+                 do_ping=DEFAULT_DO_PING,
+                 serial_number=None):
 
         super().__init__()
         self.com_port = com_port
@@ -186,6 +187,7 @@ class DfuTransportSerial(DfuTransport):
         self.dfu_adapter = None
         self.ping_id     = 0
         self.do_ping     = do_ping
+        self.serial_number = None
 
         self.mtu         = 0
 
@@ -316,14 +318,17 @@ class DfuTransportSerial(DfuTransport):
         start = datetime.now()
         while not device and datetime.now() - start < timedelta(seconds=self.timeout):
             time.sleep(0.5)
-            device = lister.get_device(com=self.com_port)
+            if self.serial_number:
+                device = lister.get_device(serial_number=self.serial_number)
+            else:
+                device = lister.get_device(com=self.com_port)
 
         if device:
             device_serial_number = device.serial_number
 
             if not self.__is_device_in_bootloader_mode(device):
                 retry_count = 10
-                wait_time_ms = 500
+                wait_time_ms = 2000
 
                 trigger = DFUTrigger()
                 try:

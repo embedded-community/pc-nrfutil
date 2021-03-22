@@ -1562,7 +1562,7 @@ def usb_serial_restart(port, connect_delay, flow_control, packet_receipt_notific
     logger.info("Using board at serial port: {}".format(port))
     serial_backend = DfuTransportSerial(com_port=str(port), baud_rate=baud_rate,
                                         flow_control=flow_control, prn=packet_receipt_notification, do_ping=False,
-                                        timeout=timeout)
+                                        timeout=timeout, serial_number=serial_number)
     Dfu.restart(serial_backend, connect_delay)
     click.echo("Device restarted")
 
