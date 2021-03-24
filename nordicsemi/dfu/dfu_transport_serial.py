@@ -198,27 +198,8 @@ class DfuTransportSerial(DfuTransport):
         super().open()
         try:
             self.__ensure_bootloader()
-            retry_count = 10
-            wait_time = 1
-            for retry in range(retry_count):
-                try:
-                    if self.serial_number:
-                        logger.debug(f"Serial number is known: {self.serial_number}, acquiring port")
-                        lister = DeviceLister()
-                        device = lister.get_device(serial_number=self.serial_number)
-                        self.com_port = device.get_first_available_com_port()
-                        logger.debug(f"Received port {self.com_port} for {self.serial_number}")
-
-                    self.serial_port = Serial(port=self.com_port,
-                        baudrate=self.baud_rate, rtscts=self.flow_control, timeout=self.DEFAULT_SERIAL_PORT_TIMEOUT)
-                    logger.info(f"Serial port {self.com_port} opened successfully(retry: {retry})")
-                    break
-                except Exception as error:
-                    logger.error(f"Serial port {self.com_port} open(retry: {retry}) failed due to {error}")
-                    time.sleep(wait_time)
-                    if r == retry_count -1:
-                        raise error
-
+            self.serial_port = Serial(port=self.com_port,
+                baudrate=self.baud_rate, rtscts=self.flow_control, timeout=self.DEFAULT_SERIAL_PORT_TIMEOUT)
             self.dfu_adapter = DFUAdapter(self.serial_port)
         except OSError as e:
             raise NordicSemiException("Serial port could not be opened on {0}"
