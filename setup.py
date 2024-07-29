@@ -46,7 +46,6 @@ import os
 import sys
 
 from setuptools import setup, find_packages
-from setuptools.command.test import test as TestCommand
 
 from nordicsemi import version
 
@@ -123,17 +122,6 @@ with open("requirements.txt") as reqs_file:
     reqs = reqs_file.readlines()
 
 
-class NoseTestCommand(TestCommand):
-    def finalize_options(self):
-        TestCommand.finalize_options(self)
-        self.test_args = []
-        self.test_suite = True
-
-    def run_tests(self):
-        import nose
-        nose.run_exit(argv=['nosetests', '--with-xunit', '--xunit-file=unittests.xml'])
-
-
 setup(
     name="nrfutil",
     version=version.NRFUTIL_VERSION,
@@ -151,10 +139,6 @@ setup(
     python_requires='>=3.7, <3.11',
     install_requires=reqs,
     zipfile=None,
-    tests_require=[
-        "nose >= 1.3.4",
-        "behave"
-    ],
     zip_safe=False,
     classifiers=[
         'Development Status :: 4 - Beta',
@@ -177,9 +161,6 @@ setup(
         'Programming Language :: Python :: 3.10',
     ],
     keywords='nordic nrf51 nrf52 ble bluetooth dfu ota softdevice serialization nrfutil pc-nrfutil',
-    cmdclass={
-        'test': NoseTestCommand
-    },
     entry_points='''
       [console_scripts]
       nrfutil = nordicsemi.__main__:cli

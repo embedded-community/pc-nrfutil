@@ -22,6 +22,10 @@ See the [InfoCenter](https://infocenter.nordicsemi.com/topic/ug_nrfutil/UG/nrfut
 
 Please report issues on the [DevZone](https://devzone.nordicsemi.com) portal.
 
+## Tests
+
+Unittests can be ran from project root directory with `python -m unittest discover -s test`.
+
 ## Contributing
 
 Feel free to propose changes by creating a pull request.
