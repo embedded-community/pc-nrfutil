@@ -121,8 +121,11 @@ def resolve_pc_ble_driver_py_version() -> str:
         os_name = 'win_amd64'
         file_name = f'pc_ble_driver_py-{version}-cp34-abi3-{os_name}.whl'
         return f'pc-ble-driver-py @ https://github.com/embedded-community/pc-ble-driver-py/releases/download/v{version}/{file_name}'
-    elif os_name == 'darwin' and machine == 'x86_64':
-        os_name = 'macosx_13_0_x86_64'
+    elif os_name == 'darwin':
+        if machine == 'x86_64':
+            os_name = 'macosx_13_0_x86_64'
+        else:
+            os_name = 'macosx_14_0_arm64'
         file_name = f'pc_ble_driver_py-{version}-cp34-abi3-{os_name}.whl'
         return f'pc-ble-driver-py @ https://github.com/embedded-community/pc-ble-driver-py/releases/download/v{version}/{file_name}'
     else:
