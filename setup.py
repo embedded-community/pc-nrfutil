@@ -42,6 +42,9 @@ USAGE:
     python setup.py install
 
 """
+from distutils.version import LooseVersion
+import pkg_resources
+import platform
 import os
 import sys
 
@@ -57,7 +60,6 @@ try:
     #  If the version that is being installed is older than the one currently installed, suggest
     #  to use a virtual environment.
 
-    import pkg_resources
     installed_packages = [d for d in pkg_resources.working_set]
     flat_installed_packages = [package.project_name for package in installed_packages]
     package = installed_packages[flat_installed_packages.index('nrfutil')]
@@ -92,6 +94,40 @@ if(not install_package):
     sys.exit(1)
 
 
+def package_version(package_name: str) -> str:
+    try:
+        return pkg_resources.get_distribution(package_name).version
+    except pkg_resources.DistributionNotFound:
+        return ''
+
+
+def resolve_pc_ble_driver_py_version() -> str:
+    version = '0.17.9'
+
+    pc_ble_driver_py_version = package_version('pc-ble-driver-py')
+    if pc_ble_driver_py_version:
+        if LooseVersion(pc_ble_driver_py_version) >= LooseVersion(version):
+            return 'pc-ble-driver-py >= 0.17.9'
+
+    # Get the OS
+    os_name = platform.system().lower()
+    machine = platform.machine().lower()
+    if os_name == 'linux' and machine == 'x86_64':
+        os_name = 'linux_x86_64'
+        # Generate the URL
+        file_name = f'pc_ble_driver_py-{version}-cp34-abi3-{os_name}.whl'
+        return f'pc-ble-driver-py @ https://github.com/embedded-community/pc-ble-driver-py/releases/download/v{version}/{file_name}'
+    elif os_name == 'windows' and machine == 'amd64':
+        os_name = 'win_amd64'
+        file_name = f'pc_ble_driver_py-{version}-cp34-abi3-{os_name}.whl'
+        return f'pc-ble-driver-py @ https://github.com/embedded-community/pc-ble-driver-py/releases/download/v{version}/{file_name}'
+    elif os_name == 'darwin' and machine == 'x86_64':
+        os_name = 'macosx_13_0_x86_64'
+        file_name = f'pc_ble_driver_py-{version}-cp34-abi3-{os_name}.whl'
+        return f'pc-ble-driver-py @ https://github.com/embedded-community/pc-ble-driver-py/releases/download/v{version}/{file_name}'
+    else:
+        return 'pc-ble-driver-py==0.17.0'
+
 excludes = ["Tkconstants",
             "Tkinter",
             "tcl",
@@ -118,9 +154,21 @@ dll_excludes = [
 build_dir = os.environ.get("NRFUTIL_BUILD_DIR", "./{}".format(version.NRFUTIL_VERSION))
 description = """A Python package that includes the nrfutil utility and the nordicsemi library"""
 
-with open("requirements.txt") as reqs_file:
-    reqs = reqs_file.readlines()
-
+reqs = [
+    'click',
+    'crcmod',
+    'ecdsa',
+    'intelhex',
+    'libusb1==1.9.3',
+    'piccata',
+    'protobuf >=3.17.3, < 4.0.0',
+    'pyserial',
+    'pyspinel >= 1.0.0a3',
+    'pyyaml',
+    'tqdm',
+    resolve_pc_ble_driver_py_version()]
+if platform.system().lower() == 'windows':
+    reqs.append('antlib >= 1.1b0')
 
 setup(
     name="nrfutil",
@@ -132,12 +180,17 @@ setup(
     long_description=description,
     packages=find_packages(exclude=["tests.*", "tests"]),
     package_data={
-                '': ['../requirements.txt', 'thread/hex/ncp.hex', 'zigbee/hex/ota.hex',
+                '': ['thread/hex/ncp.hex', 'zigbee/hex/ota.hex',
                      '../libusb/x86/libusb-1.0.dll', '../libusb/x64/libusb-1.0.dll',
                      '../libusb/x64/libusb-1.0.dylib', '../libusb/LICENSE']
     },
-    python_requires='>=3.7, <3.11',
+    python_requires='>=3.7',
     install_requires=reqs,
+    extras_require={
+        'dev': [
+            'pyinstaller'
+        ]
+    },
     zipfile=None,
     zip_safe=False,
     classifiers=[
@@ -159,6 +212,8 @@ setup(
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12'
     ],
     keywords='nordic nrf51 nrf52 ble bluetooth dfu ota softdevice serialization nrfutil pc-nrfutil',
     entry_points='''
