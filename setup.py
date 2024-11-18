@@ -100,37 +100,6 @@ def package_version(package_name: str) -> str:
     except pkg_resources.DistributionNotFound:
         return ''
 
-
-def resolve_pc_ble_driver_py_version() -> str:
-    version = '0.17.9'
-
-    pc_ble_driver_py_version = package_version('pc-ble-driver-py')
-    if pc_ble_driver_py_version:
-        if LooseVersion(pc_ble_driver_py_version) >= LooseVersion(version):
-            return 'pc-ble-driver-py >= 0.17.9'
-
-    # Get the OS
-    os_name = platform.system().lower()
-    machine = platform.machine().lower()
-    if os_name == 'linux' and machine == 'x86_64':
-        os_name = 'linux_x86_64'
-        # Generate the URL
-        file_name = f'pc_ble_driver_py-{version}-cp34-abi3-{os_name}.whl'
-        return f'pc-ble-driver-py @ https://github.com/embedded-community/pc-ble-driver-py/releases/download/v{version}/{file_name}'
-    elif os_name == 'windows' and machine == 'amd64':
-        os_name = 'win_amd64'
-        file_name = f'pc_ble_driver_py-{version}-cp34-abi3-{os_name}.whl'
-        return f'pc-ble-driver-py @ https://github.com/embedded-community/pc-ble-driver-py/releases/download/v{version}/{file_name}'
-    elif os_name == 'darwin':
-        if machine == 'x86_64':
-            os_name = 'macosx_13_0_x86_64'
-        else:
-            os_name = 'macosx_14_0_arm64'
-        file_name = f'pc_ble_driver_py-{version}-cp34-abi3-{os_name}.whl'
-        return f'pc-ble-driver-py @ https://github.com/embedded-community/pc-ble-driver-py/releases/download/v{version}/{file_name}'
-    else:
-        return 'pc-ble-driver-py==0.17.0'
-
 excludes = ["Tkconstants",
             "Tkinter",
             "tcl",
@@ -169,7 +138,7 @@ reqs = [
     'pyspinel >= 1.0.0a3',
     'pyyaml',
     'tqdm',
-    resolve_pc_ble_driver_py_version()]
+    'pc-ble-driver-py >= 0.17.0']
 if platform.system().lower() == 'windows':
     reqs.append('antlib >= 1.1b0')
 
