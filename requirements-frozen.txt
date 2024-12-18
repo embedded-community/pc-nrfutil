@@ -3,7 +3,7 @@ click==8.0.1
 crcmod==1.7
 ecdsa==0.17.0
 intelhex==2.3.0
-libusb1==1.9.3
+libusb1==3.1.0
 pc-ble-driver-py==0.17.0
 piccata==2.0.1
 protobuf==3.17.3
