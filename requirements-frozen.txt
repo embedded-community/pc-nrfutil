@@ -5,4 +5,3 @@ libusb1==3.1.0
 pc-ble-driver-py==0.17.0
 protobuf==3.17.3
 pyserial==3.5
-tqdm==4.66.3
