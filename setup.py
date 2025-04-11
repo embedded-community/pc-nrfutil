@@ -131,7 +131,6 @@ reqs = [
     'ecdsa',
     'intelhex',
     'libusb1 >= 1.9.3',
-    'piccata',
     'protobuf >=3.17.3, < 4.0.0',
     'pyserial',
     'pyspinel >= 1.0.0a3',

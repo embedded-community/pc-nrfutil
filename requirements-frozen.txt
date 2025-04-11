@@ -3,7 +3,6 @@ ecdsa==0.17.0
 intelhex==2.3.0
 libusb1==3.1.0
 pc-ble-driver-py==0.17.0
-piccata==2.0.1
 protobuf==3.17.3
 pyserial==3.5
 pyspinel==1.0.3
