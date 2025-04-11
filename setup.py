@@ -133,7 +133,6 @@ reqs = [
     'libusb1 >= 1.9.3',
     'protobuf >=3.17.3, < 4.0.0',
     'pyserial',
-    'pyyaml',
     'tqdm',
     'pc-ble-driver-py >= 0.17.0']
 
