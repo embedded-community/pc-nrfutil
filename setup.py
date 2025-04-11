@@ -128,19 +128,12 @@ description = """A Python package that includes the nrfutil utility and the nord
 
 reqs = [
     'click',
-    'crcmod',
     'ecdsa',
     'intelhex',
     'libusb1 >= 1.9.3',
-    'piccata',
     'protobuf >=3.17.3, < 4.0.0',
     'pyserial',
-    'pyspinel >= 1.0.0a3',
-    'pyyaml',
-    'tqdm',
     'pc-ble-driver-py >= 0.17.0']
-if platform.system().lower() == 'windows':
-    reqs.append('antlib >= 1.1b0')
 
 setup(
     name="nrfutil",
@@ -152,8 +145,7 @@ setup(
     long_description=description,
     packages=find_packages(exclude=["tests.*", "tests"]),
     package_data={
-                '': ['thread/hex/ncp.hex', 'zigbee/hex/ota.hex',
-                     '../libusb/x86/libusb-1.0.dll', '../libusb/x64/libusb-1.0.dll',
+                '': ['../libusb/x86/libusb-1.0.dll', '../libusb/x64/libusb-1.0.dll',
                      '../libusb/x64/libusb-1.0.dylib', '../libusb/LICENSE']
     },
     python_requires='>=3.7',
