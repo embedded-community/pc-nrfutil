@@ -53,7 +53,6 @@ from nordicsemi.dfu.dfu_transport_serial import DfuTransportSerial
 from nordicsemi.dfu.package import Package
 from nordicsemi import version as nrfutil_version
 from nordicsemi.dfu.signing import Signing
-from nordicsemi.zigbee.prod_config import ProductionConfig, ProductionConfigWrongException, ProductionConfigTooLargeException
 from pc_ble_driver_py.exceptions import NordicSemiException
 from nordicsemi.lister.device_lister import DeviceLister
 import spinel.util as util
@@ -1572,49 +1571,6 @@ def _pretty_help_option(text: str):
     for line in text.split("\n"):
         formatted_lines.append(line + " " * 100)
     return "\n".join(formatted_lines)
-
-
-@zigbee.command(short_help='Generate the Zigbee Production Config (version 1) hex file.',
-                name='production_config',)
-@click.argument('input', required=True, type=click.Path())
-@click.argument('output', required=True, type=click.Path())
-@click.option('--offset', type=BASED_INT_OR_NONE, help=_pretty_help_option(
-    "Offset at which the Production Config is located.\n"
-    "Depending on the SDK and the device versions, use the following values:\n"
-    f"{ProductionConfig.offset_help()}"
-    f"By default, the value for {ProductionConfig.DEFAULT_OFFSET_SDK} "
-    f"{ProductionConfig.DEFAULT_OFFSET_CHIP} is used."))
-def production_config(input, output, offset):
-    """
-    Generate the Production config hex file for Zigbee Devices out of YAML-structured description.
-    Generated Production config is in version 1.
-
-    INPUT - path to yaml file.\n
-            Example yaml content:
-
-    \b
-                channel_mask: 0x00100000
-                install_code: 83FED3407A939723A5C639B26916D505
-                extended_address: AABBCCDDEEFF0011
-                tx_power: 9
-                app_data: 01ABCD
-
-    OUTPUT - name of output file
-    """
-    try:
-        pc = ProductionConfig(input)
-    except ProductionConfigWrongException:
-        raise click.UsageError("Input YAML file format wrong."
-                               " Please see the example YAML file in the documentation.")
-
-    try:
-        if offset is None:
-            pc.generate(output)
-        else:
-            pc.generate(output, offset=offset)
-        click.echo("Production Config hexfile generated.")
-    except ProductionConfigTooLargeException as e:
-        raise click.UsageError(f"Production Config too large: {e.length} bytes")
 
 
 if __name__ == '__main__':

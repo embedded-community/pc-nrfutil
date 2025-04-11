@@ -128,7 +128,6 @@ description = """A Python package that includes the nrfutil utility and the nord
 
 reqs = [
     'click',
-    'crcmod',
     'ecdsa',
     'intelhex',
     'libusb1 >= 1.9.3',
