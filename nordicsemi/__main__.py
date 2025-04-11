@@ -34,8 +34,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-import ipaddress
-import signal
 
 """nrfutil command line tool."""
 import os
@@ -55,7 +53,6 @@ from nordicsemi import version as nrfutil_version
 from nordicsemi.dfu.signing import Signing
 from pc_ble_driver_py.exceptions import NordicSemiException
 from nordicsemi.lister.device_lister import DeviceLister
-import spinel.util as util
 
 logger = logging.getLogger(__name__)
 
