@@ -138,8 +138,6 @@ reqs = [
     'pyyaml',
     'tqdm',
     'pc-ble-driver-py >= 0.17.0']
-if platform.system().lower() == 'windows':
-    reqs.append('antlib >= 1.1b0')
 
 setup(
     name="nrfutil",
