@@ -182,7 +182,7 @@ setup(
     keywords='nordic nrf51 nrf52 ble bluetooth dfu ota softdevice serialization nrfutil pc-nrfutil',
     entry_points='''
       [console_scripts]
-      nrfutil = nordicsemi.__main__:cli
+      nrfutil-deprecated = nordicsemi.__main__:cli
     ''',
     console=[{
         "script": "./nordicsemi/__main__.py",
