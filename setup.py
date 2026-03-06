@@ -42,9 +42,7 @@ USAGE:
     python setup.py install
 
 """
-from distutils.version import LooseVersion
-import pkg_resources
-import platform
+from importlib import metadata as importlib_metadata
 import os
 import sys
 
@@ -60,10 +58,8 @@ try:
     #  If the version that is being installed is older than the one currently installed, suggest
     #  to use a virtual environment.
 
-    installed_packages = [d for d in pkg_resources.working_set]
-    flat_installed_packages = [package.project_name for package in installed_packages]
-    package = installed_packages[flat_installed_packages.index('nrfutil')]
-    installed_versions = [int(i) for i in package.version.split(".")]
+    installed_version = importlib_metadata.version('nrfutil')
+    installed_versions = [int(i) for i in installed_version.split(".")]
     new_versions = [int(i) for i in version.NRFUTIL_VERSION.split(".")]
     legacy_version = False
     for v1, v2 in zip(installed_versions, new_versions):
@@ -83,10 +79,10 @@ try:
         if(prompt.lower() not in valid_response):
             install_package = False
 
-except ImportError:
-    pass  # pkg_resources not available.
-except Exception:
+except importlib_metadata.PackageNotFoundError:
     pass  # Nrfutil is not already installed.
+except Exception:
+    pass  # Fallback to install.
 
 
 # Exit program if user doesn't want to replace newer version.
@@ -96,8 +92,8 @@ if(not install_package):
 
 def package_version(package_name: str) -> str:
     try:
-        return pkg_resources.get_distribution(package_name).version
-    except pkg_resources.DistributionNotFound:
+        return importlib_metadata.version(package_name)
+    except importlib_metadata.PackageNotFoundError:
         return ''
 
 excludes = ["Tkconstants",
