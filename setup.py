@@ -127,7 +127,7 @@ reqs = [
     'ecdsa',
     'intelhex',
     'libusb1 >= 1.9.3',
-    'protobuf >=4.21, < 5.0.0',
+    'protobuf >=4.21, < 7.0.0',
     'pyserial',
     'pc-ble-driver-py >= 0.17.0']
 
